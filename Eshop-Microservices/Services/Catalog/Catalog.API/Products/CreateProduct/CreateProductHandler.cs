@@ -1,7 +1,6 @@
 ﻿
-using BuildingBlocks.CQRS;
 using Catalog.API.Models;
-using MediatR;
+
 
 namespace Catalog.API.Products.CreateProduct
 {
@@ -12,7 +11,8 @@ namespace Catalog.API.Products.CreateProduct
     public record CreateProductResponse(Guid Id);
 
     // Handler
-    public class CreateProductHandler : ICommandHandler<CreateProductRequest, CreateProductResponse>
+    public class CreateProductHandler(IDocumentSession session)
+        : ICommandHandler<CreateProductRequest, CreateProductResponse>
     {
         public async Task<CreateProductResponse> Handle(CreateProductRequest request, CancellationToken cancellationToken)
         {
@@ -26,8 +26,11 @@ namespace Catalog.API.Products.CreateProduct
                 Price = request.Price
             };
             // Save to databse
+            session.Store(product);
+            await session.SaveChangesAsync(cancellationToken);
+
             // Return create product result
-            return new CreateProductResponse(Guid.NewGuid());
+            return new CreateProductResponse(product.Id);
         }
     }
 }
