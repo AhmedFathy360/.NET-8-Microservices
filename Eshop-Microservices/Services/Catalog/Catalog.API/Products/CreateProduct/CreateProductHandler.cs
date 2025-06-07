@@ -27,18 +27,12 @@
         }
     }
     // Handler
-    internal class CreateProductHandler(IDocumentSession session, IValidator<CreateProductRequest> validator)
+    internal class CreateProductHandler(IDocumentSession session)
         : ICommandHandler<CreateProductRequest, CreateProductResponse>
     {
         public async Task<CreateProductResponse> Handle(CreateProductRequest request, CancellationToken cancellationToken)
         {
             // Create a product entity from a command object
-            // Validate the request
-            var validationResult = await validator.ValidateAsync(request, cancellationToken);
-            if (!validationResult.IsValid)
-            {
-                throw new ValidationException(validationResult.Errors);
-            }
             var product = new Product
             {
                 Name = request.Name,
