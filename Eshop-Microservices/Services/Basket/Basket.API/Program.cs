@@ -1,5 +1,3 @@
-using BuildingBlocks.Exceptions.Handlers;
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -23,7 +21,18 @@ builder.Services.AddMarten(opts =>
 
 builder.Services.AddScoped<IBasketRepository, BasketRepository>();
 
+builder.Services.Decorate<IBasketRepository, CachedBasketRepository>();
+
+builder.Services.AddStackExchangeRedisCache(options =>
+{
+    options.Configuration = builder.Configuration.GetConnectionString("Redis");
+    //options.InstanceName = "Basket";
+});
 builder.Services.AddExceptionHandler<CustomExceptionHandler>();
+
+builder.Services.AddHealthChecks()
+     .AddNpgSql(builder.Configuration.GetConnectionString("Database")!)
+    .AddRedis(builder.Configuration.GetConnectionString("Redis")!);
 
 var app = builder.Build();
 
@@ -31,5 +40,11 @@ var app = builder.Build();
 app.MapCarter();
 
 app.UseExceptionHandler(options => { });
+
+app.UseHealthChecks("/health", 
+    new HealthCheckOptions
+    {
+        ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+    });
 
 app.Run();
