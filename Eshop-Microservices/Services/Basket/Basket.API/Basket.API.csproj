@@ -23,7 +23,7 @@
 
   <ItemGroup>
     <Folder Include="Dtos\" />
-    <Folder Include="gRPCServices\" />
+    <Folder Include="GrpcServices\" />
   </ItemGroup>
 
   <ItemGroup>
