@@ -1,10 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Ordering.Application
 {
@@ -13,8 +8,10 @@ namespace Ordering.Application
         public static IServiceCollection AddApplicationServices
             (this IServiceCollection services, IConfiguration configuration)
         {
-            // Register application services here
-            // Example: services.AddScoped<IOrderService, OrderService>();
+            
+            services.AddMediatR(cfg =>
+            cfg.RegisterServicesFromAssembly(typeof(DependencyInjection).Assembly));
+
             return services;
         }
     }
