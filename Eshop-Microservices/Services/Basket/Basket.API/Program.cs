@@ -1,4 +1,6 @@
 using Discount.Grpc;
+using BuildingBlocks.Messaging.MassTransit;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -44,9 +46,13 @@ builder.Services.AddGrpcClient<DiscountProtoService.DiscountProtoServiceClient>(
             ServerCertificateCustomValidationCallback =
             HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
         };
+
         // This is not recommended for production use, as it bypasses SSL certificate validation.
         return handler;
     });
+
+//Async Communication Services
+builder.Services.AddMessageBroker(builder.Configuration);
 
 // Crross-Cutting Services
 builder.Services.AddExceptionHandler<CustomExceptionHandler>();

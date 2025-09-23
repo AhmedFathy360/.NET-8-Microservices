@@ -20,8 +20,12 @@ public static class Extentions
             {
                 configurator.Host(new Uri(configuration["MessageBroker:Host"]!), host =>
                 {
-                    host.Username(configuration["MessageBroker:UserName"]);
-                    host.Password(configuration["MessageBroker:Password"]);
+                    var username = configuration["MessageBroker:UserName"] 
+                        ?? throw new ArgumentNullException("MessageBroker:UserName", "RabbitMQ username configuration is missing.");
+                    var password = configuration["MessageBroker:Password"] 
+                        ?? throw new ArgumentNullException("MessageBroker:Password", "RabbitMQ password configuration is missing.");
+                    host.Username(username);
+                    host.Password(password);
                 });
                 configurator.ConfigureEndpoints(context);
             });
